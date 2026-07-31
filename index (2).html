@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banner Store</title>
+  <style>
+    :root {
+      --bg-color: #0b0c0e;
+      --card-bg: #14161a;
+      --card-inner-bg: #1c1f26;
+      --text-color: #ffffff;
+      --text-muted: #9a9ea7;
+      --accent-color: #0084ff;
+      --glow-color: rgba(0, 132, 255, 0.4);
+      --border-color: #262930;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --card-inner-bg: #f0f2f5;
+      --text-color: #1a1a1a;
+      --text-muted: #666666;
+      --accent-color: #0084ff;
+      --glow-color: rgba(0, 132, 255, 0.2);
+      --border-color: #e0e0e0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* Navbar */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+    }
+
+    .hamburger-btn {
+      background: var(--card-inner-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger-btn:hover {
+      box-shadow: 0 0 12px var(--accent-color);
+      transform: scale(1.05);
+    }
+
+    /* Centered Nav Links with Animation & Shadow */
+    .nav-links-center {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-grow: 1;
+    }
+
+    .nav-pill {
+      background: var(--card-inner-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 8px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px var(--glow-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-pill:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(0, 132, 255, 0.6);
+      border-color: var(--accent-color);
+      color: #fff;
+    }
+
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 101;
+    }
+
+    .menu-dropdown.show { display: block; }
+
+    .menu-btn {
+      background: transparent;
+      color: var(--text-color);
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 100%;
+      text-align: left;
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+    }
+
+    /* Resized Compact Banner Cards */
+    .banner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .banner-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .banner-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px var(--glow-color);
+      border-color: var(--accent-color);
+    }
+
+    .banner-img-container {
+      width: 100%;
+      height: 170px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .banner-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .banner-img-container:hover img {
+      transform: scale(1.08);
+    }
+
+    .banner-card-body {
+      padding: 16px;
+    }
+
+    .banner-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .banner-size {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .banner-price {
+      color: #20c997;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .order-btn {
+      width: 100%;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--glow-color);
+    }
+
+    .order-btn:hover {
+      background: #006ce6;
+      box-shadow: 0 6px 18px rgba(0, 132, 255, 0.8);
+    }
+
+    /* Photo Blur Lightbox Modal (50% Blurred Background) */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px); /* 50% Blur Effect */
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 85%;
+      max-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 0 35px rgba(0, 132, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Lightbox Controls (Scroll & Close) */
+    .lightbox-btn {
+      background: rgba(20, 22, 26, 0.8);
+      border: 1px solid var(--accent-color);
+      color: #fff;
+      font-size: 1.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      box-shadow: 0 0 15px var(--glow-color);
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .lightbox-btn:hover {
+      background: var(--accent-color);
+      transform: scale(1.15);
+      box-shadow: 0 0 25px rgba(0, 132, 255, 0.9);
+    }
+
+    .lightbox-close {
+      top: -20px;
+      right: -20px;
+      font-size: 1.2rem;
+      background: rgba(230, 57, 70, 0.8);
+      border-color: #e63946;
+    }
+
+    .lightbox-close:hover {
+      background: #e63946;
+      box-shadow: 0 0 20px rgba(230, 57, 70, 0.9);
+    }
+
+    .lightbox-prev { left: -60px; }
+    .lightbox-next { right: -60px; }
+
+    /* About & Contact Outer Cards */
+    .info-card-outer {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .info-card-outer:hover {
+      box-shadow: 0 8px 25px var(--glow-color);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .contact-inner-card {
+      background: var(--card-inner-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    /* Modal Form Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 25px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;}
+    .form-group input { width: 100%; padding: 10px; background: var(--card-inner-bg); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+      
+      <!-- Centered Nav Links -->
+      <div class="nav-links-center">
+        <a href="#store" class="nav-pill">🖼️ Store</a>
+        <a href="#about" class="nav-pill">ℹ️ About</a>
+        <a href="#contact" class="nav-pill">📞 Contact</a>
+      </div>
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div id="dropdownMenu" class="menu-dropdown">
+      <button class="menu-btn" onclick="toggleTheme()">🌓 Light / Dark Mode</button>
+    </div>
+  </header>
+
+  <div class="main-container">
+
+    <!-- Store Section -->
+    <section id="store">
+      <h2 class="section-title">Available Banners</h2>
+      <div class="banner-grid">
+        
+        <!-- Compact Banner Card 1 -->
+        <div class="banner-card">
+          <div class="banner-img-container" onclick="openLightbox(0)">
+            <img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=600&q=80" alt="gust banner">
+          </div>
+          <div class="banner-card-body">
+            <h3>gust</h3>
+            <div class="banner-size">📐 Size: 2m x 3m</div>
+            <div class="banner-price">2,500 ETB</div>
+            <button class="order-btn" onclick="openOrderModal('gust', '2m x 3m', 2500)">Order Now</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="info-card-outer">
+      <h2 style="margin-bottom: 10px; color: var(--accent-color);">ℹ️ About Us</h2>
+      <p style="color: var(--text-muted);">
+        Welcome to <strong>Banner Store</strong>. We are a premier digital printing platform dedicated to crafting high-impact, professional banners for businesses, personal events, and promotional campaigns.
+      </p>
+    </section>
+
+    <!-- Contact Us Section -->
+    <section id="contact" class="info-card-outer">
+      <h2 style="margin-bottom: 10px; color: #e63946;">📞 Contact Us</h2>
+      <div class="contact-grid">
+        <div class="contact-inner-card">
+          <strong>📍 Location</strong>
+          <p style="color: var(--text-muted);">Injibara, Ethiopia</p>
+        </div>
+        <div class="contact-inner-card">
+          <strong>📱 Phone</strong>
+          <p style="color: var(--text-muted);">
+            <a href="tel:0970015759" style="color:inherit; text-decoration:none;">0970015759</a><br>
+            <a href="tel:0968329238" style="color:inherit; text-decoration:none;">0968329238</a><br>
+            <a href="tel:0945427695" style="color:inherit; text-decoration:none;">0945427695</a>
+          </p>
+        </div>
+        <div class="contact-inner-card">
+          <strong>✉️ Email</strong>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">alemayehufanuel15@gmail.com</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Photo Lightbox Modal (50% Blur) -->
+  <div id="lightboxModal" class="lightbox-modal">
+    <div class="lightbox-content">
+      <button class="lightbox-btn lightbox-close" onclick="closeLightbox()">✖</button>
+      <button class="lightbox-btn lightbox-prev" onclick="changeImage(-1)">❮</button>
+      <img id="lightboxImage" class="lightbox-img" src="" alt="Banner Preview">
+      <button class="lightbox-btn lightbox-next" onclick="changeImage(1)">❯</button>
+    </div>
+  </div>
+
+  <!-- Order Modal -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <span style="float:right; cursor:pointer;" onclick="closeOrderModal()">✖</span>
+      <h3 style="margin-bottom: 12px; color: var(--accent-color);">Order Banner</h3>
+      <div id="modalBannerDetails" style="margin-bottom: 12px; font-weight: bold;"></div>
+
+      <form id="orderForm">
+        <div class="form-group"><label>Full Name</label><input type="text" id="custName" required></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="custPhone" required></div>
+        <div class="form-group"><label>Address</label><input type="text" id="custAddress" required></div>
+        <div class="form-group"><label>Gmail</label><input type="email" id="custGmail" required></div>
+        <div class="form-group"><label>Qty</label><input type="number" id="custQty" value="1" min="1" required></div>
+        <button type="submit" class="order-btn">Confirm Order</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const imagesList = [
+      "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1000&q=80"
+    ];
+    let currentImgIndex = 0;
+
+    function openLightbox(index) {
+      currentImgIndex = index;
+      document.getElementById('lightboxImage').src = imagesList[currentImgIndex];
+      document.getElementById('lightboxModal').style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').style.display = 'none';
+    }
+
+    function changeImage(direction) {
+      currentImgIndex += direction;
+      if (currentImgIndex < 0) currentImgIndex = imagesList.length - 1;
+      if (currentImgIndex >= imagesList.length) currentImgIndex = 0;
+      document.getElementById('lightboxImage').src = imagesList[currentImgIndex];
+    }
+
+    function toggleMenu() {
+      document.getElementById('dropdownMenu').classList.toggle('show');
+    }
+
+    function toggleTheme() {
+      const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      toggleMenu();
+    }
+
+    function openOrderModal(title, size, price) {
+      document.getElementById('modalBannerDetails').innerText = `${title} (${price} ETB)`;
+      document.getElementById('orderModal').style.display = 'flex';
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').style.display = 'none';
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('custGmail').value;
+      if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+        alert('❌ እባክዎን ትክክለኛ የ Gmail አድራሻ ያስገቡ!');
+        return;
+      }
+      alert('✅ ትዕዛዝዎ ተልኳል!');
+      closeOrderModal();
+    });
+  </script>
+</body>
+</html>
